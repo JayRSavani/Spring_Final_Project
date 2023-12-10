@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/styles.css">
+
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Product Registration</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #ecf0f1;
+            color: #333;
+            text-align: center;
+        }
+
+        header {
+            background-color: #2ecc71;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #2ecc71;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            color: #3498db;
+            font-size: 1em;
+            margin: 10px 0;
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 10px 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        a {
+            background-color: #e74c3c;
+            color: #ffffff;
+            padding: 10px 20px;
+            font-size: 1em;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Include the header template -->
+<div th:insert="fragments/header.html"></div><br>
+
+<!-- Your page content goes here -->
+<div>
+    <h2>Product Registration</h2>
+
+    <form action="/registerProduct" method="post">
+        <label for="registrationId">Registration ID:</label>
+        <input type="text" id="registrationId" name="registrationId" required/><br/>
+
+        <label for="productName">Product Name:</label>
+        <select id="productName" name="productName">
+            <option value="CPU">CPU</option>
+            <option value="Cover">Cover</option>
+            <option value="Monitor">Monitor</option>
+            <option value="Mouse">Mouse</option>
+            <option value="Pendrive">Pendrive</option>
+            <option value="Harddisk">Harddisk</option>
+            <option value="Chip">Chip</option>
+        </select><br/>
+
+        <label for="serialNo">Serial No.:</label>
+        <input type="text" id="serialNo" name="serialNo" required/><br/>
+
+        <label for="purchaseDate">Purchase Date:</label>
+        <input type="date" id="purchaseDate" name="purchaseDate" required/><br/>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <!-- Back to Home link -->
+    <p>
+        <a th:href="@{/homePage}">Back to Home</a>
+    </p>
+</div>
+</body>
+</html>

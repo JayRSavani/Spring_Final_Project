@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/styles.css">
+
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Product Registration Successful</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #ecf0f1;
+            color: #333;
+            text-align: center;
+        }
+
+        header {
+            background-color: #2ecc71;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #2ecc71;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        a {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px 20px;
+            font-size: 1em;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Include the header template -->
+<div th:insert="fragments/header.html"></div><br>
+
+<!-- Your page content goes here -->
+<div>
+    <h2>Congratulations, Your Product Registration Was Successful!!!</h2>
+
+    <!-- Message -->
+    <p th:text="${message}"></p>
+
+    <!-- Go to HomePage link -->
+    <p>
+        <a th:href="@{/homePage}">Go to HomePage</a>
+    </p>
+</div>
+</body>
+</html>

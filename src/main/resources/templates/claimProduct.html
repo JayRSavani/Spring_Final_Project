@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="/styles.css">
+
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Claim Your Product</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #ecf0f1;
+            color: #333;
+            text-align: center;
+        }
+
+        header {
+            background-color: #2ecc71;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #2ecc71;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            color: #3498db;
+            font-size: 1em;
+            margin: 10px 0;
+            display: block;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 10px 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        a {
+            background-color: #e74c3c;
+            color: #ffffff;
+            padding: 10px 20px;
+            font-size: 1em;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #c0392b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Include the header template -->
+<div th:insert="fragments/header.html"></div><br>
+
+<!-- Your page content goes here -->
+<div>
+    <h2>Claim Your Product</h2>
+
+    <!-- Your Registered Products -->
+    <h2>Your Registered Products:</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Registration ID</th>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Serial No</th>
+            <th>Purchase Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Loop through registered products and display in rows -->
+        <!-- Example:
+             <tr>
+                <td>123</td>
+                <td>456</td>
+                <td>CPU</td>
+                <td>ABC123</td>
+                <td>2023-12-31</td>
+            </tr>
+        -->
+        </tbody>
+    </table>
+
+    <!-- Fill out form to Claim Product -->
+    <h2>Fill out this form to Claim your Product</h2>
+    <form action="/claimProduct" method="post">
+        <label for="claimId">Claim ID:</label>
+        <input type="text" id="claimId" name="claimId" required/><br/>
+
+        <label for="registrationId">Registration ID:</label>
+        <input type="text" id="registrationId" name="registrationId" required/><br/>
+
+        <label for="claimDate">Claim Date:</label>
+        <input type="date" id="claimDate" name="claimDate" required/><br/>
+
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" required></textarea><br/>
+
+        <button type="submit">Claim</button>
+    </form>
+
+    <!-- Go to HomePage link -->
+    <p>
+        <a th:href="@{/homePage}">Go to HomePage</a>
+    </p>
+</div>
+</body>
+</html>
