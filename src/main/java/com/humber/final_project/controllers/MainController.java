@@ -1,9 +1,8 @@
 package com.humber.final_project.controllers;
 
-import com.humber.final_project.models.ClaimForm;
-import com.humber.final_project.models.LoginForm;
-import com.humber.final_project.models.UserRegistrationForm;
-import com.humber.final_project.models.ProductRegistrationForm;
+import com.humber.final_project.models.*;
+import com.humber.final_project.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +26,20 @@ public class MainController {
         return "login";
     }
 
+    private final UserRepository userRepository;
+
+    // Constructor injection
+
+    @Autowired
+    public MainController(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @PostMapping("/register")
-    public String registerUser(UserRegistrationForm userRegistrationForm, Model model) {
-        if (isRegistrationSuccessful(userRegistrationForm)) {
+    public String registerUser(User user, Model model) {
+        if (isRegistrationSuccessful(user)) {
+           this.userRepository.save(user);
+
             model.addAttribute("message", "Registration Successful");
             return "redirect:/registrationSuccess";
         } else {
@@ -39,17 +49,29 @@ public class MainController {
     }
 
     // Add your registration logic here
-    private boolean isRegistrationSuccessful(UserRegistrationForm userRegistrationForm) {
+    private boolean isRegistrationSuccessful(User user) {
         // Implement your logic to determine if the registration is successful.
         // For simplicity, check if all fields are filled.
-        return userRegistrationForm != null &&
-                userRegistrationForm.getUserId() != null &&
-                userRegistrationForm.getUsername() != null &&
-                userRegistrationForm.getPassword() != null &&
-                userRegistrationForm.getEmail() != null &&
-                userRegistrationForm.getPhoneNumber() != null &&
-                userRegistrationForm.getName() != null;
+        return user != null &&
+                user.getUser_id()!= null &&
+                user.getUser_name() != null &&
+                user.getPassword() != null &&
+                user.getEmail() != null &&
+                user.getPhone_no() != null &&
+                user.getName() != null;
+
     }
+
+    @GetMapping("/registrationFailure")
+    public String showRegistrationFailurePage() {
+        return "registrationFailure";
+    }
+
+    @GetMapping("/registrationSuccess")
+    public String showRegistrationSuccessPage() {
+        return "registrationSuccess";
+    }
+
 
     @PostMapping("/login")
     public String loginUser(LoginForm loginForm, Model model) {

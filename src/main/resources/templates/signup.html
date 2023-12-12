@@ -85,15 +85,19 @@
 <body>
 
 <!-- Include the header template -->
-<div th:insert="fragments/header.html"></div><br>
+<!--<div th:insert="fragments/header.html"></div><br>-->
+
+<!-- Include the header template -->
+<div th:insert="~{fragments/header :: header}"></div><br>
+
 
 <!-- Your page content goes here -->
 <div>
-    <h2>User Registration</h2>
+    <h2>Signup</h2>
 
     <form action="/register" method="post">
-        <label for="userId">UserID:</label>
-        <input type="text" id="userId" name="userId" required/><br/>
+        <label for="username">User ID:</label>
+        <input type="text" id="userid" name="userid" required/><br/>
 
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required/><br/>
@@ -101,8 +105,8 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required/><br/>
 
-        <label for="email">Email ID:</label>
-        <input type="email" id="email" name="email" required/><br/>
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required/><br/>
 
         <label for="phoneNumber">Phone Number:</label>
         <input type="text" id="phoneNumber" name="phoneNumber" required/><br/>
@@ -110,7 +114,9 @@
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required/><br/>
 
-        <button type="submit">SignUp</button>
+        <button type="submit">Signup</button>
+
+
     </form>
 
     <p>

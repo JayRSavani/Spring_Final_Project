@@ -10,8 +10,9 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClaimForm {
-    private String claimId;
-    private String registrationId;
+    private Integer claimId;
+    private Integer registrationId;
     private Date claimDate;
     private String description;
+    private String status;
 }
