@@ -161,4 +161,29 @@ public class MainController {
     public String showClaimFailurePage() {
         return "claimFailure";
     }
+
+    @GetMapping("/adminLogin")
+    public String showAdminLoginPage() {
+        return "adminLogin";
+    }
+
+    @GetMapping("/addProduct")
+    public String showAddProductPage() {
+        return "addProduct";
+    }
+
+    @PostMapping("/addProduct")
+    public String addProduct(ProductRegistrationForm productRegistrationForm, Model model) {
+        // Implement your product addition logic here.
+        // For simplicity, let's assume a successful addition if all fields are filled.
+        if (isProductRegistrationSuccessful(productRegistrationForm)) {
+            // Product added successfully, redirect to success page
+            return "redirect:/addProductSuccess";
+        } else {
+            // Product addition failed, redirect to failure page
+            return "redirect:/addProductFailure";
+        }
+    }
+
+
 }
