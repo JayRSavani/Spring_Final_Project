@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
@@ -123,19 +124,18 @@ public class MainController {
     }
 
     @PostMapping("/addProduct")
-    public String addProduct(Products product, Model model) {
-        // Check if the product ID already exists
-        Products existingProduct = productRepository.findById(product.getId());
-
-        if (existingProduct != null) {
-            // Product ID already exists, redirect to failure page
+    public String addProduct(@ModelAttribute("product") Products product, Model model) {
+        // Check if the product name already exists
+        if (productRepository.findByName(product.getName()) != null) {
+            // Product name already exists, redirect to failure page
             return "redirect:/addProductFailure";
-        } else {
-            // Product ID doesn't exist, add the product to the database
-            productRepository.save(product);
-            model.addAttribute("message", "Product added successfully");
-            return "redirect:/addProductSuccess";
         }
+
+        // Save the new product
+        productRepository.save(product);
+
+        // Product added successfully, redirect to success page
+        return "redirect:/addProductSuccess";
     }
 
 
