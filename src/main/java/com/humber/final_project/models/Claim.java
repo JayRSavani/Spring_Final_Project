@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 import java.util.Date;
 
 @Entity
@@ -13,11 +14,14 @@ import java.util.Date;
 @Data
 public class Claim {
 
-    enum ClaimStatus {
-        PENDING,
+    public enum ClaimStatus {
+        @Enumerated(EnumType.STRING)
         APPROVED,
+        PENDING,
         REJECTED
     }
+
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

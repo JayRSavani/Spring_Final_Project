@@ -1,8 +1,11 @@
 package com.humber.final_project.controllers;
+import com.humber.final_project.models.Claim.ClaimStatus;
 
+import com.humber.final_project.models.Claim;
 import com.humber.final_project.models.ProductRegistration;
 import com.humber.final_project.models.Products;
 import com.humber.final_project.models.Users;
+import com.humber.final_project.repositories.ClaimRepository;
 import com.humber.final_project.repositories.ProductRegistrationRepository;
 import com.humber.final_project.repositories.ProductRepository;
 import com.humber.final_project.repositories.UserRepository;
@@ -23,13 +26,16 @@ public class MainController {
     UserRepository userRepository;
     ProductRepository productRepository;
     ProductRegistrationRepository productRegistrationRepository;
+    ClaimRepository claimRepository;
 
     @Autowired
     public MainController(UserRepository userRepository, ProductRepository productRepository,
-                          ProductRegistrationRepository productRegistrationRepository) {
+                          ProductRegistrationRepository productRegistrationRepository,
+                          ClaimRepository claimRepository) {
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.productRegistrationRepository = productRegistrationRepository;
+        this.claimRepository = claimRepository;
     }
 
     @GetMapping("/")
@@ -41,6 +47,8 @@ public class MainController {
     public String showSignUpPage() {
         return "signup";
     }
+
+
 
     @GetMapping("/login")
     public String showLoginPage() {
@@ -83,11 +91,6 @@ public class MainController {
         return "HomePage";
     }
 
-//    @GetMapping("/registerProduct")
-//    public String showRegisterProductPage() {
-//        return "registerProduct";
-//    }
-
     @GetMapping("/ProductRegisterSuccess")
     public String showProductRegistrationSuccessPage() {
         return "ProductRegisterSuccess";
@@ -98,10 +101,6 @@ public class MainController {
         return "ProductRegisterFailure";
     }
 
-    @GetMapping("/claimProduct")
-    public String showClaimProductPage() {
-        return "claimProduct";
-    }
 
     @GetMapping("/ClaimSuccess")
     public String showClaimSuccessPage() {
@@ -141,10 +140,8 @@ public class MainController {
             return "redirect:/addProductFailure";
         }
 
-        // Save the new product
         productRepository.save(product);
 
-        // Product added successfully, redirect to success page
         return "redirect:/addProductSuccess";
     }
 
@@ -169,7 +166,6 @@ public class MainController {
 
     @PostMapping("/registerProduct")
     public String registerProduct(@ModelAttribute("product") Products product,
-
                                   @RequestParam("serialNo") String serialNo,
                                   @RequestParam("purchaseDate") String purchaseDate,
                                   Model model) {
@@ -177,7 +173,7 @@ public class MainController {
 
         ProductRegistration productRegistration = new ProductRegistration();
         productRegistration.setSerialNumber(serialNo);
-        productRegistration.setPurchaseDate(parseDate(purchaseDate)); // Implement this method to parse the date
+        productRegistration.setPurchaseDate(parseDate(purchaseDate));
         productRegistration.setUser(user);
 
         productRegistrationRepository.save(productRegistration);
@@ -186,17 +182,56 @@ public class MainController {
     }
 
     private Users fetchLoggedInUser() {
-        // Implement this method to fetch the logged-in user
-        // You might need to use Spring Security or your own authentication mechanism
-        // to get the currently logged-in user
-        // For simplicity, you can return a dummy user for now
+
         return userRepository.findByUsername("admin");
     }
 
     private Date parseDate(String dateString) {
-
         return new Date();
     }
+
+
+    @GetMapping("/claimProduct")
+    public String showClaimProductPage(Model model) {
+        List<ProductRegistration> registrations = (List<ProductRegistration>) productRegistrationRepository.findAll();
+
+        model.addAttribute("registrations", registrations);
+
+        return "claimProduct";
+    }
+
+    @PostMapping("/claimProduct")
+    public String claimProduct(@RequestParam("registrationId") int registrationId,
+                               @RequestParam("claimDate") String claimDate,
+                               @RequestParam("description") String description) {
+
+        // Check if the product registration exists
+        ProductRegistration productRegistration = productRegistrationRepository.findById(registrationId).orElse(null);
+
+        if (productRegistration != null) {
+            Claim claim = new Claim();
+            claim.setClaimDate(parseDate(claimDate));
+            claim.setClaimDescription(description);
+            claim.setClaimStatus(Claim.ClaimStatus.PENDING);
+            claim.setProductRegistration(productRegistration);
+
+            // Save the updated ProductRegistration
+            productRegistrationRepository.save(productRegistration);
+
+            // Save the new Claim
+            claimRepository.save(claim);
+
+            return "redirect:/ClaimSuccess";
+        } else {
+            // Redirect to claim failure if registration ID does not exist
+            return "redirect:/ClaimFailure";
+        }
+    }
+
+
+
+
+
 
 
 
