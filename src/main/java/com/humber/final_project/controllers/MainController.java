@@ -87,9 +87,9 @@ System.out.println(user1);
             model.addAttribute("user", user1);
 
             if (user1.getRole().equals(Users.Role.ADMIN)) {
-                return "/adminLogin";
+                return "redirect:/adminLogin";
             } else {
-                return "/HomePage";
+                return "redirect:/HomePage";
             }
         } else {
             return "redirect:/loginFailure";

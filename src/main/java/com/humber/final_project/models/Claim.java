@@ -27,8 +27,8 @@ public class Claim {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     private Date claimDate;
-    @Enumerated(EnumType.STRING)
 
+    @Enumerated(EnumType.STRING)
     private ClaimStatus claimStatus;
     private String claimDescription;
 

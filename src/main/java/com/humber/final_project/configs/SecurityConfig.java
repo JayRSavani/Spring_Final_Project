@@ -2,14 +2,13 @@ package com.humber.final_project.configs;
 
 import com.humber.final_project.models.Users;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -24,15 +23,18 @@ public class SecurityConfig {
     }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) ->
                         authorize
-//                                .requestMatchers(
-//                                        new AntPathRequestMatcher("/adminLogin")
-//                                        ).hasRole(Users.Role.ADMIN.toString().toUpperCase())
-//                                .requestMatchers(
-//                                        new AntPathRequestMatcher("/HomePage")
-//                                        ).hasRole(Users.Role.USER.toString().toUpperCase())
+                                .requestMatchers("/h2-console/**").permitAll()
+
+                                .requestMatchers(
+                                        new AntPathRequestMatcher("/adminLogin")
+                                        ).hasAnyAuthority(Users.Role.ADMIN.toString().toUpperCase())
+                                .requestMatchers(
+                                        new AntPathRequestMatcher("/HomePage")
+                                        ).hasAnyAuthority(Users.Role.USER.toString().toUpperCase())
                                 .anyRequest().authenticated()
                 ).formLogin(
                         form -> form
@@ -54,12 +56,9 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
-//
-//    @Value("${spring.websecurity.debug:false}")
-//    boolean webSecurityDebug;
-//
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() {
-//        return (web) -> web.debug(webSecurityDebug);
-//    }
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .requestMatchers( "/h2-console/**", "/", "/signup", "/register", "/css/**", "/js/**", "/images/**");
+    }
 }
