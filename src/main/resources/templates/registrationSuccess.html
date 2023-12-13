@@ -51,11 +51,9 @@
 </head>
 <body>
 
-<!-- Include the header template -->
-<!--<div th:insert="fragments/header.html"></div><br>-->
-<div th:insert="~{fragments/header :: header}"></div><br>
 
-<!-- Your page content goes here -->
+<div th:insert="fragments/header.html"></div><br>
+
 <div>
     <h2>Registration Successful</h2>
     <p th:text="${message}"></p>

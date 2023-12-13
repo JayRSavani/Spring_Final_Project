@@ -33,6 +33,7 @@
             width: 80%;
             border-collapse: collapse;
             margin: 20px auto;
+            border: 2px solid #3498db;
         }
 
         th, td {
@@ -42,7 +43,7 @@
         }
 
         th {
-            background-color: #3498db;
+            background-color: #000000;
             color: #ffffff;
         }
 
@@ -69,6 +70,7 @@
             box-sizing: border-box;
             border: 1px solid #3498db;
             border-radius: 5px;
+            background-color: #ecf0f1;
         }
 
         a {
@@ -88,14 +90,11 @@
 </head>
 <body>
 
-<!-- Include the header template -->
 <div th:insert="fragments/header.html"></div><br>
 
-<!-- Admin Dashboard -->
 <div>
     <h2>Admin Dashboard</h2>
 
-    <!-- Product Data -->
     <h2>Product Data:</h2>
     <table>
         <thead>
@@ -106,22 +105,22 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Loop through products and display in rows -->
-        <!-- Example:
-        <tr>
-            <td>1</td>
-            <td>Product A</td>
-            <td><button>Delete</button></td>
+
+        <tr th:each="product : ${products}">
+            <td th:text="${product.id}"></td>
+            <td th:text="${product.name}"></td>
+            <td>
+                <form th:action="@{'/deleteProduct/' + ${product.id}}" method="post">
+                    <button type="submit">DELETE</button>
+                </form>
+            </td>
         </tr>
-        -->
         </tbody>
     </table>
 
-    <!-- Add Product -->
     <h2>Add Product:</h2>
     <button onclick="location.href='/addProduct'">Add Product</button>
 
-    <!-- User Data -->
     <h2>User Data:</h2>
     <table>
         <thead>
@@ -131,17 +130,14 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Loop through users and display in rows -->
-        <!-- Example:
-        <tr>
-            <td>1</td>
-            <td>User A</td>
+
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.username}"></td>
         </tr>
-        -->
         </tbody>
     </table>
 
-    <!-- Product Registration Data -->
     <h2>Product Registration Data:</h2>
     <table>
         <thead>
@@ -154,20 +150,17 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Loop through registrations and display in rows -->
-        <!-- Example:
-        <tr>
-            <td>1</td>
-            <td>1</td>
-            <td>1</td>
-            <td>ABC123</td>
-            <td>2023-12-31</td>
+
+        <tr th:each="registration : ${registrations}">
+            <td th:text="${registration.id}"></td>
+            <td th:text="${registration.user.id}"></td>
+            <td th:text="${registration.product.id}"></td>
+            <td th:text="${registration.serialNumber}"></td>
+            <td th:text="${registration.purchaseDate}"></td>
         </tr>
-        -->
         </tbody>
     </table>
 
-    <!-- Claim Data -->
     <h2>Claim Data:</h2>
     <table>
         <thead>
@@ -181,27 +174,31 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Loop through claims and display in rows -->
-        <!-- Example:
-        <tr>
-            <td>1</td>
-            <td>1</td>
-            <td>2023-12-31</td>
-            <td>Claim description</td>
+
+        <tr th:each="claim : ${claims}">
+            <td th:text="${claim.id}"></td>
+            <td th:text="${claim.productRegistration.id}"></td>
+            <td th:text="${claim.claimDate}"></td>
+            <td th:text="${claim.claimDescription}"></td>
             <td>
-                <select>
-                    <option>Pending</option>
-                    <option>Approved</option>
-                    <option>Reject</option>
-                </select>
+                <span th:text="${claim.claimStatus}"></span>
             </td>
-            <td><button>Save</button></td>
+            <td>
+                <form th:action="@{'/saveClaimStatus/' + ${claim.id}}" method="post">
+                    <div>
+                        <select name="newStatus">
+                            <option value="PENDING">Pending</option>
+                            <option value="APPROVED">Approved</option>
+                            <option value="REJECTED">Rejected</option>
+                        </select>
+                        <button type="submit">Save</button>
+                    </div>
+                </form>
+            </td>
         </tr>
-        -->
         </tbody>
     </table>
 
-    <!-- Logout link -->
     <p>
         <a th:href="@{/}">Logout</a>
     </p>

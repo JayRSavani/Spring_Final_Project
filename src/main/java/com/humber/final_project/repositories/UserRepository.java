@@ -8,7 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends CrudRepository<Users, Integer> {
-
     Users findByEmail(String email);
     Users findByUsername(String username);
     Users findById(int id);
