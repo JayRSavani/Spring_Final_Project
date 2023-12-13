@@ -95,19 +95,10 @@
 <div>
     <h2>Product Registration</h2>
 
-    <form action="/registerProduct" method="post">
-        <label for="registrationId">Registration ID:</label>
-        <input type="text" id="registrationId" name="registrationId" required/><br/>
-
+    <form action="/registerProduct" method="post" th:object="${product}">
         <label for="productName">Product Name:</label>
-        <select id="productName" name="productName">
-            <option value="CPU">CPU</option>
-            <option value="Cover">Cover</option>
-            <option value="Monitor">Monitor</option>
-            <option value="Mouse">Mouse</option>
-            <option value="Pendrive">Pendrive</option>
-            <option value="Harddisk">Harddisk</option>
-            <option value="Chip">Chip</option>
+        <select id="productName" name="productName" th:field="*{name}" required>
+            <option th:each="productName : ${productNames}" th:value="${productName}" th:text="${productName}"></option>
         </select><br/>
 
         <label for="serialNo">Serial No.:</label>
