@@ -127,16 +127,35 @@
 <div>
     <h2>Admin Dashboard</h2>
 
+
+    <h2>Product Data:</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="product : ${products}">
+            <td th:text="${product.id}"></td>
+            <td th:text="${product.name}"></td>
+            <td>
+                <form th:action="@{'/deleteProduct/' + ${product.id}}" method="post">
+                    <button type="submit">DELETE</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
     <p>
+        <a th:href="@{/adminLogin}">Dashboard</a>
         <a th:href="@{/logout}">Logout</a>
+
     </p>
 </div>
-
-
-
-
-
-
-
 </body>
 </html>

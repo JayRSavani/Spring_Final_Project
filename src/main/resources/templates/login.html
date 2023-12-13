@@ -80,21 +80,38 @@
         a:hover {
             text-decoration: underline;
         }
+
+        .alert {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-danger {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+
+        .alert-success {
+            color: #3c763d;
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+
     </style>
 </head>
 <body>
 
-<!-- Include the header template -->
 <div th:insert="fragments/header.html"></div><br>
 
-<!-- Your page content goes here -->
 <div>
     <h2>Login</h2>
 
     <form action="/login" method="post">
-        <label for="userId">User ID:</label>
-        <input type="text" id="userId" name="userId" required/><br/>
-
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required/><br/>
 
@@ -103,6 +120,12 @@
 
         <button type="submit">Login</button>
     </form>
+    <div th:if="${param.error}">
+        <div class="alert alert-danger">Invalid Username or Password</div>
+    </div>
+    <div th:if="${param.logout}">
+        <div class="alert alert-success">You have been logged out.</div>
+    </div>
 
     <p>
         <a th:href="@{/}">Back to Dashboard</a>

@@ -91,26 +91,34 @@
             margin: 20px auto;
         }
 
-        table, th, td {
+        th, td {
+            padding: 15px;
+            text-align: left;
+            background-color: #3498db;
+            color: #ffffff;
             border: 1px solid #ddd;
         }
 
-        th, td {
-            padding: 10px;
-            text-align: left;
+        th {
+            background-color: #2ecc71;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #e0e0e0;
         }
     </style>
 </head>
 <body>
 
-<!-- Include the header template -->
 <div th:insert="fragments/header.html"></div><br>
 
-<!-- Your page content goes here -->
 <div>
     <h2>Claim Your Product</h2>
 
-    <!-- Your Registered Products -->
     <h2>Your Registered Products:</h2>
     <table>
         <thead>
@@ -123,24 +131,19 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Loop through registered products and display in rows -->
-        <!-- Example:
-             <tr>
-                <td>123</td>
-                <td>456</td>
-                <td>CPU</td>
-                <td>ABC123</td>
-                <td>2023-12-31</td>
-            </tr>
-        -->
+
+        <tr th:each="registration : ${registrations}">
+            <td th:text="${registration.id}"></td>
+            <td th:text="${registration.product.id}"></td>
+            <td th:text="${registration.product.name}"></td>
+            <td th:text="${registration.serialNumber}"></td>
+            <td th:text="${registration.purchaseDate}"></td>
+        </tr>
         </tbody>
     </table>
 
-    <!-- Fill out form to Claim Product -->
     <h2>Fill out this form to Claim your Product</h2>
     <form action="/claimProduct" method="post">
-        <label for="claimId">Claim ID:</label>
-        <input type="text" id="claimId" name="claimId" required/><br/>
 
         <label for="registrationId">Registration ID:</label>
         <input type="text" id="registrationId" name="registrationId" required/><br/>
@@ -154,9 +157,8 @@
         <button type="submit">Claim</button>
     </form>
 
-    <!-- Go to HomePage link -->
     <p>
-        <a th:href="@{/homePage}">Go to HomePage</a>
+        <a th:href="@{/HomePage}">Go to HomePage</a>
     </p>
 </div>
 </body>

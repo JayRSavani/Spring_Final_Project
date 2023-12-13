@@ -1,47 +1,84 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="stylesheet" href="/static/styles.css">
+
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="/static/styles.css">
     <title>Home Page</title>
     <style>
         body {
             margin: 0;
             font-family: 'Arial', sans-serif;
-            background-color: #ecf0f1;
+            background-color: #f7f7f7;
             color: #333;
             text-align: center;
         }
 
         header {
-            background-color: #2ecc71;
+            background-color: #3498db;
             color: #ffffff;
             padding: 20px;
             text-align: center;
         }
 
         h2 {
-            color: #2ecc71;
+            color: #3498db;
             font-size: 2em;
             margin-bottom: 20px;
         }
 
-        button {
+        navbar {
+
+            color: #ffffff;
+            padding: 10px;
+            text-align: center;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        navbar button {
             background-color: #3498db;
             color: #ffffff;
             padding: 10px 20px;
             font-size: 1em;
-            margin: 10px;
             cursor: pointer;
             border: none;
             border-radius: 5px;
             transition: background-color 0.3s ease;
         }
 
-        button:hover {
-            background-color: #2980b9;
+        navbar button:hover {
+            background-color: #333333; /* Darker shade of black */
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            border: 2px solid #3498db;
+        }
+
+        th, td {
+            border: 1px solid #3498db;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+            background-color: #ecf0f1;
         }
 
         a {
@@ -57,16 +94,14 @@
         a:hover {
             background-color: #c0392b;
         }
+
     </style>
 </head>
 <body>
 
-<!-- Include the header template -->
-<div th:insert="fragments/header.html"></div><br>
+<div th:insert="fragments/header.html"></div>
 
-<!-- Your page content goes here -->
-<div>
-    <h2>Welcome to the Home Page</h2>
+<navbar>
     <form action="/registerProduct" method="get">
         <button type="submit">Register Product</button>
     </form>
@@ -74,11 +109,36 @@
     <form action="/claimProduct" method="get">
         <button type="submit">Claim Product</button>
     </form>
+</navbar>
 
-    <!-- Logout link -->
+<div>
+    <h2>Status of your Claim Products</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Claim ID</th>
+            <th>Claim Date</th>
+            <th>Description</th>
+            <th>Claim Status</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="claim : ${userClaims}">
+            <td th:text="${claim.id}"></td>
+            <td th:text="${claim.claimDate}"></td>
+            <td th:text="${claim.claimDescription}"></td>
+            <td th:text="${claim.claimStatus}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <br><br><br>
+
     <p>
-        <a th:href="@{/}">Logout</a>
+        <a th:href="@{/logout}">Logout</a>
     </p>
 </div>
+
 </body>
 </html>
