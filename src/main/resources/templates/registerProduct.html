@@ -97,8 +97,8 @@
 
     <form action="/registerProduct" method="post" th:object="${product}">
         <label for="productName">Product Name:</label>
-        <select id="productName" name="productName" th:field="*{name}" required>
-            <option th:each="productName : ${productNames}" th:value="${productName}" th:text="${productName}"></option>
+        <select id="productName" name="productName" th:field="*{id}" required>
+            <option th:each="p : ${products}" th:value="${p.getId()}" th:text="${p.getName()}"></option>
         </select><br/>
 
         <label for="serialNo">Serial No.:</label>

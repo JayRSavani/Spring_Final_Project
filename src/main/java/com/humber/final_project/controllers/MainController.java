@@ -1,5 +1,6 @@
 package com.humber.final_project.controllers;
 
+import com.humber.final_project.Services.UserService;
 import com.humber.final_project.models.ProductRegistration;
 import com.humber.final_project.models.Products;
 import com.humber.final_project.models.Users;
@@ -7,6 +8,8 @@ import com.humber.final_project.repositories.ProductRegistrationRepository;
 import com.humber.final_project.repositories.ProductRepository;
 import com.humber.final_project.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,17 +27,29 @@ public class MainController {
     ProductRepository productRepository;
     ProductRegistrationRepository productRegistrationRepository;
 
+    UserService userService;
+
     @Autowired
     public MainController(UserRepository userRepository, ProductRepository productRepository,
-                          ProductRegistrationRepository productRegistrationRepository) {
+                          ProductRegistrationRepository productRegistrationRepository,
+                          UserService userService) {
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.productRegistrationRepository = productRegistrationRepository;
+        this.userService = userService;
+
     }
 
     @GetMapping("/")
     public String showMainPage() {
         return "mainPage";
+    }
+
+    @GetMapping("/403")
+    public String show403Page() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(auth.getAuthorities());
+        return "403";
     }
 
     @GetMapping("/signup")
@@ -58,14 +73,14 @@ public class MainController {
     @PostMapping("/login")
     public String login(Users user, Model model) {
         Users user1 = userRepository.findByUsername(user.getUsername());
-
+System.out.println(user1);
         if (user1 != null && user1.getPassword().equals(user.getPassword())) {
             model.addAttribute("user", user1);
 
-            if ("Admin".equals(user1.getUsername()) && "12345678".equals(user1.getPassword())) {
-                return "redirect:/adminLogin";
+            if (user1.getRole().equals(Users.Role.ADMIN)) {
+                return "/adminLogin";
             } else {
-                return "redirect:/HomePage";
+                return "/HomePage";
             }
         } else {
             return "redirect:/loginFailure";
@@ -148,20 +163,12 @@ public class MainController {
         return "redirect:/addProductSuccess";
     }
 
-    private List<String> getProductNames() {
-        List<String> productNames = new ArrayList<>();
-        Iterable<Products> products = productRepository.findAll();
-        for (Products product : products) {
-            productNames.add(product.getName());
-        }
-        return productNames;
-    }
 
 
     @GetMapping("/registerProduct")
     public String showRegisterProductPage(Model model) {
-        List<String> productNames = getProductNames();
-        model.addAttribute("productNames", productNames);
+        List<Products> products = (List<Products>)this.productRepository.findAll();
+        model.addAttribute("products", products);
         model.addAttribute("product", new Products());
 
         return "registerProduct";
@@ -169,28 +176,20 @@ public class MainController {
 
     @PostMapping("/registerProduct")
     public String registerProduct(@ModelAttribute("product") Products product,
-
                                   @RequestParam("serialNo") String serialNo,
                                   @RequestParam("purchaseDate") String purchaseDate,
                                   Model model) {
-        Users user = fetchLoggedInUser();
 
+        Users user = userService.getCurrentLoggedInUser();
         ProductRegistration productRegistration = new ProductRegistration();
         productRegistration.setSerialNumber(serialNo);
         productRegistration.setPurchaseDate(parseDate(purchaseDate)); // Implement this method to parse the date
         productRegistration.setUser(user);
+        productRegistration.setProduct(productRepository.findById(product.getId()).get());
 
         productRegistrationRepository.save(productRegistration);
 
         return "redirect:/ProductRegisterSuccess";
-    }
-
-    private Users fetchLoggedInUser() {
-        // Implement this method to fetch the logged-in user
-        // You might need to use Spring Security or your own authentication mechanism
-        // to get the currently logged-in user
-        // For simplicity, you can return a dummy user for now
-        return userRepository.findByUsername("admin");
     }
 
     private Date parseDate(String dateString) {

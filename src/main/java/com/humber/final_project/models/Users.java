@@ -1,13 +1,12 @@
 package com.humber.final_project.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Arrays;
 
 @Entity
 @AllArgsConstructor
@@ -15,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class Users {
 
-    enum Role {
+    public enum Role {
         ADMIN,
         USER
     }
@@ -24,6 +23,7 @@ public class Users {
     private int id;
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
     private String email;
     private String phone;
