@@ -1,6 +1,8 @@
 package com.humber.final_project.controllers;
 
+import com.humber.final_project.models.Products;
 import com.humber.final_project.models.Users;
+import com.humber.final_project.repositories.ProductRepository;
 import com.humber.final_project.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,9 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class MainController {
     UserRepository userRepository;
+    ProductRepository productRepository;
+
     @Autowired
-    public MainController(UserRepository userRepository) {
+    public MainController(UserRepository userRepository, ProductRepository productRepository) {
         this.userRepository = userRepository;
+        this.productRepository = productRepository;
     }
 
     @GetMapping("/")
@@ -106,6 +111,33 @@ public class MainController {
     public String showAddProductPage() {
         return "addProduct";
     }
+
+    @GetMapping("/addProductSuccess")
+    public String showAddProductSuccessPage() {
+        return "addProductSuccess";
+    }
+
+    @GetMapping("/addProductFailure")
+    public String showAddProductFailurePage() {
+        return "addProductFailure";
+    }
+
+    @PostMapping("/addProduct")
+    public String addProduct(Products product, Model model) {
+        // Check if the product ID already exists
+        Products existingProduct = productRepository.findById(product.getId());
+
+        if (existingProduct != null) {
+            // Product ID already exists, redirect to failure page
+            return "redirect:/addProductFailure";
+        } else {
+            // Product ID doesn't exist, add the product to the database
+            productRepository.save(product);
+            model.addAttribute("message", "Product added successfully");
+            return "redirect:/addProductSuccess";
+        }
+    }
+
 
 
 
