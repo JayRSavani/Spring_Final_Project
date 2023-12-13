@@ -272,7 +272,7 @@ public class MainController {
             productRepository.delete(product);
         }
 
-        return "redirect:/claimData";
+        return "redirect:/productData";
     }
 
 }
