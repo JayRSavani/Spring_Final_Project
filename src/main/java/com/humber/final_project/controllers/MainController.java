@@ -136,8 +136,6 @@ public class MainController {
         return "redirect:/addProductSuccess";
     }
 
-
-
     @GetMapping("/registerProduct")
     public String showRegisterProductPage(Model model) {
         List<Products> products = (List<Products>)this.productRepository.findAll();
@@ -207,25 +205,6 @@ public class MainController {
         }
     }
 
-    @GetMapping("/adminLogin")
-    public String showAdminLoginPage(Model model) {
-        List<Products> products = (List<Products>) productRepository.findAll();
-        model.addAttribute("products", products);
-
-        List<Users> users = (List<Users>) userRepository.findAll();
-        model.addAttribute("users", users);
-
-        List<ProductRegistration> registrations = (List<ProductRegistration>) productRegistrationRepository.findAll();
-        model.addAttribute("registrations", registrations);
-
-        List<Claim> claims = (List<Claim>) claimRepository.findAll();
-        model.addAttribute("claims", claims);
-
-        return "adminLogin";
-    }
-
-
-    // Mapping to save claim status
     @PostMapping("/saveClaimStatus/{claimId}")
     public String saveClaimStatus(@PathVariable Long claimId, @RequestParam("newStatus") String newStatus) {
         Claim claim = claimRepository.findById(Math.toIntExact(claimId)).orElse(null);
@@ -235,23 +214,7 @@ public class MainController {
             claimRepository.save(claim);
         }
 
-        return "redirect:/adminLogin";
-    }
-
-
-
-
-    @PostMapping("/deleteProduct/{productId}")
-    public String deleteProduct(@PathVariable int productId) {
-        Optional<Products> productOptional = productRepository.findById(productId);
-
-        if (productOptional.isPresent()) {
-            Products product = productOptional.get();
-
-            productRepository.delete(product);
-        }
-
-        return "redirect:/adminLogin";
+        return "redirect:/claimData";
     }
 
     @GetMapping("/HomePage")
@@ -266,14 +229,50 @@ public class MainController {
     }
 
 
+    @GetMapping("/adminLogin")
+    public String showAdminLoginPage(Model model) {
+        return "adminLogin";
+    }
 
+    @GetMapping("/productData")
+    public String showProductDataPage(Model model) {
+        List<Products> products = (List<Products>) productRepository.findAll();
+        model.addAttribute("products", products);
+        return "productData";
+    }
 
+    @GetMapping("/userData")
+    public String showUserDataPage(Model model) {
+        List<Users> users = (List<Users>) userRepository.findAll();
+        model.addAttribute("users", users);
+        return "userData";
+    }
 
+    @GetMapping("/productRegistrationData")
+    public String showProductRegistrationDataPage(Model model) {
+        List<ProductRegistration> registrations = (List<ProductRegistration>) productRegistrationRepository.findAll();
+        model.addAttribute("registrations", registrations);
+        return "productRegistrationData";
+    }
 
+    @GetMapping("/claimData")
+    public String showClaimDataPage(Model model) {
+        List<Claim> claims = (List<Claim>) claimRepository.findAll();
+        model.addAttribute("claims", claims);
+        return "claimData";
+    }
 
+    @PostMapping("/deleteProduct/{productId}")
+    public String deleteProduct(@PathVariable int productId) {
+        Optional<Products> productOptional = productRepository.findById(productId);
 
+        if (productOptional.isPresent()) {
+            Products product = productOptional.get();
 
+            productRepository.delete(product);
+        }
 
-
+        return "redirect:/claimData";
+    }
 
 }

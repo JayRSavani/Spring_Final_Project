@@ -6,7 +6,7 @@
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Home Page</title>
+    <title>Admin Dashboard</title>
     <style>
         body {
             margin: 0;
@@ -21,12 +21,6 @@
             color: #ffffff;
             padding: 20px;
             text-align: center;
-        }
-
-        h2 {
-            color: #3498db;
-            font-size: 2em;
-            margin-bottom: 20px;
         }
 
         navbar {
@@ -50,7 +44,13 @@
         }
 
         navbar button:hover {
-            background-color: #333333; /* Darker shade of black */
+            background-color: #2980b9;
+        }
+
+        h2 {
+            color: #3498db;
+            font-size: 2em;
+            margin-bottom: 20px;
         }
 
         table {
@@ -69,6 +69,22 @@
         th {
             background-color: #000000;
             color: #ffffff;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px 20px;
+            font-size: 1em;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
         }
 
         select {
@@ -94,51 +110,52 @@
         a:hover {
             background-color: #c0392b;
         }
-
     </style>
 </head>
 <body>
 
-<div th:insert="fragments/header.html"></div>
+<div th:insert="fragments/header.html"></div><br>
 
-<navbar>
-    <form action="/registerProduct" method="get">
-        <button type="submit">Register Product</button>
-    </form>
-
-    <form action="/claimProduct" method="get">
-        <button type="submit">Claim Product</button>
-    </form>
-</navbar>
+<nav class="navbar">
+    <button onclick="location.href='/productData'">Product Data</button>
+    <button onclick="location.href='/addProduct'">Add Product</button>
+    <button onclick="location.href='/userData'">User Data</button>
+    <button onclick="location.href='/productRegistrationData'">Product Registration Data</button>
+    <button onclick="location.href='/claimData'">Claim Data</button>
+</nav>
 
 <div>
-    <h2>Your Status of the Claim Products</h2>
+    <h2>Admin Dashboard</h2>
 
+
+    <h2>Product Data:</h2>
     <table>
         <thead>
         <tr>
-            <th>Claim ID</th>
-            <th>Claim Date</th>
-            <th>Description</th>
-            <th>Claim Status</th>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Action</th>
         </tr>
         </thead>
         <tbody>
 
-        <tr th:each="claim : ${userClaims}">
-            <td th:text="${claim.id}"></td>
-            <td th:text="${claim.claimDate}"></td>
-            <td th:text="${claim.claimDescription}"></td>
-            <td th:text="${claim.claimStatus}"></td>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.id}"></td>
+            <td th:text="${product.name}"></td>
+            <td>
+                <form th:action="@{'/deleteProduct/' + ${product.id}}" method="post">
+                    <button type="submit">DELETE</button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
-    <br><br><br>
 
     <p>
+        <a th:href="@{/adminLogin}">Dashboard</a>
         <a th:href="@{/logout}">Logout</a>
+
     </p>
 </div>
-
 </body>
 </html>
