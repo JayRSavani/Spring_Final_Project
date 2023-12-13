@@ -41,17 +41,76 @@ public class MainController {
 
     @PostMapping("/login")
     public String login(Users user, Model model) {
-        System.out.println(user);
         Users user1 = userRepository.findByUsername(user.getUsername());
-        System.out.println(user1);
-        if (user1 != null) {
-            if (user1.getPassword().equals(user.getPassword())) {
-                model.addAttribute("user", user1);
-                return "redirect:/";
+
+        if (user1 != null && user1.getPassword().equals(user.getPassword())) {
+            model.addAttribute("user", user1);
+
+            if ("Admin".equals(user1.getUsername()) && "12345678".equals(user1.getPassword())) {
+                return "redirect:/adminLogin";
+            } else {
+                return "redirect:/HomePage";
             }
+        } else {
+            return "redirect:/loginFailure";
         }
-        return "login";
     }
+
+
+    @GetMapping("/loginFailure")
+    public String showLoginFailurePage() {
+        return "loginFailure";
+    }
+
+    @GetMapping("/HomePage")
+    public String showHomePage() {
+        return "HomePage";
+    }
+
+    @GetMapping("/registerProduct")
+    public String showRegisterProductPage() {
+        return "registerProduct";
+    }
+
+    @GetMapping("/ProductRegistrationSuccess")
+    public String showProductRegistrationSuccessPage() {
+        return "ProductRegistrationSuccess";
+    }
+
+    @GetMapping("/ProductRegistrationFailure")
+    public String showProductRegistrationFailurePage() {
+        return "ProductRegistrationFailure";
+    }
+
+    @GetMapping("/claimProduct")
+    public String showClaimProductPage() {
+        return "claimProduct";
+    }
+
+    @GetMapping("/ClaimSuccess")
+    public String showClaimSuccessPage() {
+        return "ClaimSuccess";
+    }
+
+    @GetMapping("/ClaimFailure")
+    public String showClaimFailurePage() {
+        return "ClaimFailure";
+    }
+
+    @GetMapping("/adminLogin")
+    public String showAdminLoginPage() {
+        return "adminLogin";
+    }
+
+    @GetMapping("/addProduct")
+    public String showAddProductPage() {
+        return "addProduct";
+    }
+
+
+
+
+
 
 
 
