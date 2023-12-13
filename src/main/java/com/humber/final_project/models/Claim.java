@@ -20,8 +20,6 @@ public class Claim {
         REJECTED
     }
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;

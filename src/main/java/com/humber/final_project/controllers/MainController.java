@@ -1,9 +1,6 @@
 package com.humber.final_project.controllers;
-import com.humber.final_project.models.Claim.ClaimStatus;
-
 
 import com.humber.final_project.Services.UserService;
-
 import com.humber.final_project.models.Claim;
 import com.humber.final_project.models.ProductRegistration;
 import com.humber.final_project.models.Products;
@@ -17,14 +14,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.ArrayList;
+import org.springframework.web.bind.annotation.*;
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class MainController {
@@ -64,13 +58,10 @@ public class MainController {
         return "signup";
     }
 
-
-
     @GetMapping("/login")
     public String showLoginPage() {
         return "login";
     }
-
 
     @PostMapping("/register")
     public String signUp(Users user, Model model) {
@@ -82,7 +73,7 @@ public class MainController {
     @PostMapping("/login")
     public String login(Users user, Model model) {
         Users user1 = userRepository.findByUsername(user.getUsername());
-System.out.println(user1);
+            System.out.println(user1);
         if (user1 != null && user1.getPassword().equals(user.getPassword())) {
             model.addAttribute("user", user1);
 
@@ -96,15 +87,9 @@ System.out.println(user1);
         }
     }
 
-
     @GetMapping("/loginFailure")
     public String showLoginFailurePage() {
         return "loginFailure";
-    }
-
-    @GetMapping("/HomePage")
-    public String showHomePage() {
-        return "HomePage";
     }
 
     @GetMapping("/ProductRegisterSuccess")
@@ -117,7 +102,6 @@ System.out.println(user1);
         return "ProductRegisterFailure";
     }
 
-
     @GetMapping("/ClaimSuccess")
     public String showClaimSuccessPage() {
         return "ClaimSuccess";
@@ -126,11 +110,6 @@ System.out.println(user1);
     @GetMapping("/ClaimFailure")
     public String showClaimFailurePage() {
         return "ClaimFailure";
-    }
-
-    @GetMapping("/adminLogin")
-    public String showAdminLoginPage() {
-        return "adminLogin";
     }
 
     @GetMapping("/addProduct")
@@ -150,14 +129,10 @@ System.out.println(user1);
 
     @PostMapping("/addProduct")
     public String addProduct(@ModelAttribute("product") Products product, Model model) {
-        // Check if the product name already exists
         if (productRepository.findByName(product.getName()) != null) {
-            // Product name already exists, redirect to failure page
             return "redirect:/addProductFailure";
         }
-
         productRepository.save(product);
-
         return "redirect:/addProductSuccess";
     }
 
@@ -195,22 +170,24 @@ System.out.println(user1);
         return new Date();
     }
 
-
     @GetMapping("/claimProduct")
     public String showClaimProductPage(Model model) {
-        List<ProductRegistration> registrations = (List<ProductRegistration>) productRegistrationRepository.findAll();
+        Users currentUser = userService.getCurrentLoggedInUser();
+
+        List<ProductRegistration> registrations = productRegistrationRepository.findByUser(currentUser);
 
         model.addAttribute("registrations", registrations);
 
         return "claimProduct";
     }
 
+
+
     @PostMapping("/claimProduct")
     public String claimProduct(@RequestParam("registrationId") int registrationId,
                                @RequestParam("claimDate") String claimDate,
                                @RequestParam("description") String description) {
 
-        // Check if the product registration exists
         ProductRegistration productRegistration = productRegistrationRepository.findById(registrationId).orElse(null);
 
         if (productRegistration != null) {
@@ -220,25 +197,73 @@ System.out.println(user1);
             claim.setClaimStatus(Claim.ClaimStatus.PENDING);
             claim.setProductRegistration(productRegistration);
 
-            // Save the updated ProductRegistration
             productRegistrationRepository.save(productRegistration);
 
-            // Save the new Claim
             claimRepository.save(claim);
 
             return "redirect:/ClaimSuccess";
         } else {
-            // Redirect to claim failure if registration ID does not exist
             return "redirect:/ClaimFailure";
         }
+    }
+
+    @GetMapping("/adminLogin")
+    public String showAdminLoginPage(Model model) {
+        List<Products> products = (List<Products>) productRepository.findAll();
+        model.addAttribute("products", products);
+
+        List<Users> users = (List<Users>) userRepository.findAll();
+        model.addAttribute("users", users);
+
+        List<ProductRegistration> registrations = (List<ProductRegistration>) productRegistrationRepository.findAll();
+        model.addAttribute("registrations", registrations);
+
+        List<Claim> claims = (List<Claim>) claimRepository.findAll();
+        model.addAttribute("claims", claims);
+
+        return "adminLogin";
+    }
+
+
+    // Mapping to save claim status
+    @PostMapping("/saveClaimStatus/{claimId}")
+    public String saveClaimStatus(@PathVariable Long claimId, @RequestParam("newStatus") String newStatus) {
+        Claim claim = claimRepository.findById(Math.toIntExact(claimId)).orElse(null);
+
+        if (claim != null) {
+            claim.setClaimStatus(Claim.ClaimStatus.valueOf(newStatus));
+            claimRepository.save(claim);
+        }
+
+        return "redirect:/adminLogin";
     }
 
 
 
 
+    @PostMapping("/deleteProduct/{productId}")
+    public String deleteProduct(@PathVariable int productId) {
+        Optional<Products> productOptional = productRepository.findById(productId);
 
+        if (productOptional.isPresent()) {
+            Products product = productOptional.get();
 
+            productRepository.delete(product);
+        }
 
+        return "redirect:/adminLogin";
+    }
+
+    @GetMapping("/HomePage")
+    public String showHomePage(Model model, Principal principal) {
+        String username = principal.getName();
+
+        List<Claim> userClaims = claimRepository.findByProductRegistrationUserUsername(username);
+
+        model.addAttribute("userClaims", userClaims);
+
+        return "HomePage";
+    }
 
 
 
