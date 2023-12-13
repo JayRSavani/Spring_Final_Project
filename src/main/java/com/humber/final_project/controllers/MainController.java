@@ -1,9 +1,14 @@
 package com.humber.final_project.controllers;
+import com.humber.final_project.models.Claim.ClaimStatus;
+
 
 import com.humber.final_project.Services.UserService;
+
+import com.humber.final_project.models.Claim;
 import com.humber.final_project.models.ProductRegistration;
 import com.humber.final_project.models.Products;
 import com.humber.final_project.models.Users;
+import com.humber.final_project.repositories.ClaimRepository;
 import com.humber.final_project.repositories.ProductRegistrationRepository;
 import com.humber.final_project.repositories.ProductRepository;
 import com.humber.final_project.repositories.UserRepository;
@@ -26,18 +31,20 @@ public class MainController {
     UserRepository userRepository;
     ProductRepository productRepository;
     ProductRegistrationRepository productRegistrationRepository;
+    ClaimRepository claimRepository;
 
     UserService userService;
 
     @Autowired
     public MainController(UserRepository userRepository, ProductRepository productRepository,
                           ProductRegistrationRepository productRegistrationRepository,
+                          ClaimRepository claimRepository,
                           UserService userService) {
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.productRegistrationRepository = productRegistrationRepository;
         this.userService = userService;
-
+        this.claimRepository = claimRepository;
     }
 
     @GetMapping("/")
@@ -56,6 +63,8 @@ public class MainController {
     public String showSignUpPage() {
         return "signup";
     }
+
+
 
     @GetMapping("/login")
     public String showLoginPage() {
@@ -98,11 +107,6 @@ System.out.println(user1);
         return "HomePage";
     }
 
-//    @GetMapping("/registerProduct")
-//    public String showRegisterProductPage() {
-//        return "registerProduct";
-//    }
-
     @GetMapping("/ProductRegisterSuccess")
     public String showProductRegistrationSuccessPage() {
         return "ProductRegisterSuccess";
@@ -113,10 +117,6 @@ System.out.println(user1);
         return "ProductRegisterFailure";
     }
 
-    @GetMapping("/claimProduct")
-    public String showClaimProductPage() {
-        return "claimProduct";
-    }
 
     @GetMapping("/ClaimSuccess")
     public String showClaimSuccessPage() {
@@ -156,10 +156,8 @@ System.out.println(user1);
             return "redirect:/addProductFailure";
         }
 
-        // Save the new product
         productRepository.save(product);
 
-        // Product added successfully, redirect to success page
         return "redirect:/addProductSuccess";
     }
 
@@ -183,7 +181,7 @@ System.out.println(user1);
         Users user = userService.getCurrentLoggedInUser();
         ProductRegistration productRegistration = new ProductRegistration();
         productRegistration.setSerialNumber(serialNo);
-        productRegistration.setPurchaseDate(parseDate(purchaseDate)); // Implement this method to parse the date
+        productRegistration.setPurchaseDate(parseDate(purchaseDate));
         productRegistration.setUser(user);
         productRegistration.setProduct(productRepository.findById(product.getId()).get());
 
@@ -192,10 +190,53 @@ System.out.println(user1);
         return "redirect:/ProductRegisterSuccess";
     }
 
-    private Date parseDate(String dateString) {
 
+    private Date parseDate(String dateString) {
         return new Date();
     }
+
+
+    @GetMapping("/claimProduct")
+    public String showClaimProductPage(Model model) {
+        List<ProductRegistration> registrations = (List<ProductRegistration>) productRegistrationRepository.findAll();
+
+        model.addAttribute("registrations", registrations);
+
+        return "claimProduct";
+    }
+
+    @PostMapping("/claimProduct")
+    public String claimProduct(@RequestParam("registrationId") int registrationId,
+                               @RequestParam("claimDate") String claimDate,
+                               @RequestParam("description") String description) {
+
+        // Check if the product registration exists
+        ProductRegistration productRegistration = productRegistrationRepository.findById(registrationId).orElse(null);
+
+        if (productRegistration != null) {
+            Claim claim = new Claim();
+            claim.setClaimDate(parseDate(claimDate));
+            claim.setClaimDescription(description);
+            claim.setClaimStatus(Claim.ClaimStatus.PENDING);
+            claim.setProductRegistration(productRegistration);
+
+            // Save the updated ProductRegistration
+            productRegistrationRepository.save(productRegistration);
+
+            // Save the new Claim
+            claimRepository.save(claim);
+
+            return "redirect:/ClaimSuccess";
+        } else {
+            // Redirect to claim failure if registration ID does not exist
+            return "redirect:/ClaimFailure";
+        }
+    }
+
+
+
+
+
 
 
 
