@@ -15,7 +15,6 @@ import java.util.Date;
 public class Claim {
 
     public enum ClaimStatus {
-        @Enumerated(EnumType.STRING)
         APPROVED,
         PENDING,
         REJECTED
